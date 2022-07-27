@@ -1,4 +1,6 @@
-stm32f407vgt6_gui
+stm32f407vgt6 + ili9325 
+
+buffer->DMA->FSMC
 
 stm32cubeide project
 
