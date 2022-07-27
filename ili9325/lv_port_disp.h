@@ -27,8 +27,8 @@ extern "C" {
  *********************/
 #define MY_DISP_HOR_RES    320
 #define MY_DISP_VER_RES    240
-#define GUI_BUFF_TYPE 2
-#define GUI_MAX_ROWS_OUT 20
+#define GUI_BUFF_TYPE 1
+#define GUI_MAX_ROWS_OUT 10
 #define GUI_USE_DMA 1
 
 
