@@ -4,4 +4,4 @@ buffer->DMA->FSMC
 
 stm32cubeide project
 
-If the touchscreen does not work, then switch (off / on) the power. Perhaps a faulty ili9325 board, after resetting the button, there is no IRQ signal from the touchscreen.
+if the touchscreen does not work, then switch (off / on) the power of the display board, then reset the STM32. Possibly faulty ili9325 board
