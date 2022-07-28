@@ -6,15 +6,21 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../ili9325/ili9325.c \
-../ili9325/lv_port_disp.c 
+../ili9325/lv_port_disp.c \
+../ili9325/lv_port_indev.c \
+../ili9325/touch_panel.c 
 
 OBJS += \
 ./ili9325/ili9325.o \
-./ili9325/lv_port_disp.o 
+./ili9325/lv_port_disp.o \
+./ili9325/lv_port_indev.o \
+./ili9325/touch_panel.o 
 
 C_DEPS += \
 ./ili9325/ili9325.d \
-./ili9325/lv_port_disp.d 
+./ili9325/lv_port_disp.d \
+./ili9325/lv_port_indev.d \
+./ili9325/touch_panel.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

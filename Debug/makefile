@@ -76,64 +76,6 @@ RM := rm -rf
 -include lvgl/src/draw/arm2d/subdir.mk
 -include lvgl/src/draw/subdir.mk
 -include lvgl/src/core/subdir.mk
--include lvgl/examples/widgets/win/subdir.mk
--include lvgl/examples/widgets/tileview/subdir.mk
--include lvgl/examples/widgets/textarea/subdir.mk
--include lvgl/examples/widgets/tabview/subdir.mk
--include lvgl/examples/widgets/table/subdir.mk
--include lvgl/examples/widgets/switch/subdir.mk
--include lvgl/examples/widgets/spinner/subdir.mk
--include lvgl/examples/widgets/spinbox/subdir.mk
--include lvgl/examples/widgets/span/subdir.mk
--include lvgl/examples/widgets/slider/subdir.mk
--include lvgl/examples/widgets/roller/subdir.mk
--include lvgl/examples/widgets/obj/subdir.mk
--include lvgl/examples/widgets/msgbox/subdir.mk
--include lvgl/examples/widgets/meter/subdir.mk
--include lvgl/examples/widgets/menu/subdir.mk
--include lvgl/examples/widgets/list/subdir.mk
--include lvgl/examples/widgets/line/subdir.mk
--include lvgl/examples/widgets/led/subdir.mk
--include lvgl/examples/widgets/label/subdir.mk
--include lvgl/examples/widgets/keyboard/subdir.mk
--include lvgl/examples/widgets/imgbtn/subdir.mk
--include lvgl/examples/widgets/img/subdir.mk
--include lvgl/examples/widgets/dropdown/subdir.mk
--include lvgl/examples/widgets/colorwheel/subdir.mk
--include lvgl/examples/widgets/checkbox/subdir.mk
--include lvgl/examples/widgets/chart/subdir.mk
--include lvgl/examples/widgets/canvas/subdir.mk
--include lvgl/examples/widgets/calendar/subdir.mk
--include lvgl/examples/widgets/btnmatrix/subdir.mk
--include lvgl/examples/widgets/btn/subdir.mk
--include lvgl/examples/widgets/bar/subdir.mk
--include lvgl/examples/widgets/arc/subdir.mk
--include lvgl/examples/widgets/animimg/subdir.mk
--include lvgl/examples/styles/subdir.mk
--include lvgl/examples/scroll/subdir.mk
--include lvgl/examples/porting/subdir.mk
--include lvgl/examples/others/snapshot/subdir.mk
--include lvgl/examples/others/msg/subdir.mk
--include lvgl/examples/others/monkey/subdir.mk
--include lvgl/examples/others/imgfont/subdir.mk
--include lvgl/examples/others/ime/subdir.mk
--include lvgl/examples/others/gridnav/subdir.mk
--include lvgl/examples/others/fragment/subdir.mk
--include lvgl/examples/libs/sjpg/subdir.mk
--include lvgl/examples/libs/rlottie/subdir.mk
--include lvgl/examples/libs/qrcode/subdir.mk
--include lvgl/examples/libs/png/subdir.mk
--include lvgl/examples/libs/gif/subdir.mk
--include lvgl/examples/libs/freetype/subdir.mk
--include lvgl/examples/libs/ffmpeg/subdir.mk
--include lvgl/examples/libs/bmp/subdir.mk
--include lvgl/examples/layouts/grid/subdir.mk
--include lvgl/examples/layouts/flex/subdir.mk
--include lvgl/examples/get_started/subdir.mk
--include lvgl/examples/event/subdir.mk
--include lvgl/examples/assets/emoji/subdir.mk
--include lvgl/examples/assets/subdir.mk
--include lvgl/examples/anim/subdir.mk
 -include lvgl/demos/widgets/assets/subdir.mk
 -include lvgl/demos/widgets/subdir.mk
 -include lvgl/demos/stress/subdir.mk
@@ -196,7 +138,7 @@ main-build: stm32f407vgt6_lvgl_803.elf secondary-outputs
 
 # Tool invocations
 stm32f407vgt6_lvgl_803.elf: $(OBJS) $(USER_OBJS) /home/rus/Yandex.Disk/Projects/stm32_linux/stm32f407/stm32f407vgt6_gui/STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "stm32f407vgt6_lvgl_803.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/rus/Yandex.Disk/Projects/stm32_linux/stm32f407/stm32f407vgt6_gui/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f407vgt6_lvgl_803.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "stm32f407vgt6_lvgl_803.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/rus/Yandex.Disk/Projects/stm32_linux/stm32f407/stm32f407vgt6_gui/STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="stm32f407vgt6_lvgl_803.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

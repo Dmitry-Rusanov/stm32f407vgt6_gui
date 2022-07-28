@@ -19,11 +19,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "ili9325.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lvgl.h"
 #include "lv_port_disp.h"
+
+#include "touch_panel.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,7 +52,7 @@ DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
 SRAM_HandleTypeDef hsram1;
 
 /* USER CODE BEGIN PV */
-
+uint8_t isTouchCalibrate = 0;//start calibrate touchscreen
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -65,6 +68,27 @@ static void MX_USART3_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static uint8_t lock_exti = 0;
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+   if((GPIO_Pin == GPIO_PIN_0 )&(!lock_exti)) // если прерывание поступило от ножки PA0
+   {
+	  isTouchCalibrate = true;
+      lock_exti++;
+   }
+}
+
+static void event_handler(lv_event_t * e)
+{
+    lv_event_code_t code = lv_event_get_code(e);
+
+    if(code == LV_EVENT_CLICKED) {
+        LV_LOG_USER("Clicked");
+    }
+    else if(code == LV_EVENT_VALUE_CHANGED) {
+        LV_LOG_USER("Toggled");
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -75,7 +99,7 @@ static void MX_USART3_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	 uint16_t linenum = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -101,40 +125,42 @@ int main(void)
   MX_SPI2_Init();
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
+HAL_Delay(1000);
+HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+HAL_Delay(1000);
+HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
 ILI9325_Init();
+TouchPanel_Calibrate_default();
+
 lv_init();
 lv_port_disp_init();
+lv_port_indev_init();
 
-lv_obj_t * label1 = lv_label_create(lv_scr_act());
-lv_label_set_long_mode(label1, LV_LABEL_LONG_WRAP);     /*Break the long lines*/
-lv_label_set_recolor(label1, true);                      /*Enable re-coloring by commands in the text*/
-lv_label_set_text(label1, "#0000ff Re-color# #ff00ff words# #ff0000 of a# label, align the lines to the center "
-                          "and wrap long text automatically.");
-lv_obj_set_width(label1, 150);  /*Set smaller width to make the lines wrap*/
-lv_obj_set_style_text_align(label1, LV_TEXT_ALIGN_CENTER, 0);
-lv_obj_align(label1, LV_ALIGN_CENTER, 0, -40);
 
-lv_obj_t * label2 = lv_label_create(lv_scr_act());
-lv_label_set_long_mode(label2, LV_LABEL_LONG_SCROLL_CIRCULAR);     /*Circular scroll*/
-lv_obj_set_width(label2, 150);
-lv_label_set_text(label2, "It is a circularly scrolling text. ");
-lv_obj_align(label2, LV_ALIGN_CENTER, 0, 40);
 
-  /* USER CODE END 2 */
+
+lv_demo_widgets();
+/* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  lv_task_handler();
-	  		HAL_Delay(10);
+	  if(isTouchCalibrate)
+	  {
+		  isTouchCalibrate = false;
+		  TouchPanel_Calibrate();
+		  lock_exti = 0;
+	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+	  lv_task_handler();
+	  HAL_Delay(10);
+  }
   /* USER CODE END 3 */
-}
 }
 
 /**
@@ -283,7 +309,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA2_Stream0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 }
@@ -299,6 +325,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
@@ -309,6 +336,15 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BL_PWM_GPIO_Port, BL_PWM_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PA0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LCDTP_CS_Pin */
   GPIO_InitStruct.Pin = LCDTP_CS_Pin;
@@ -329,6 +365,17 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BL_PWM_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_Pin */
+  GPIO_InitStruct.Pin = LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
 }
 

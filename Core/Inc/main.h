@@ -70,6 +70,8 @@ void Error_Handler(void);
 #define LCDTP_DOUT_GPIO_Port GPIOB
 #define LCDTP_DIN_Pin GPIO_PIN_15
 #define LCDTP_DIN_GPIO_Port GPIOB
+#define LED_Pin GPIO_PIN_13
+#define LED_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

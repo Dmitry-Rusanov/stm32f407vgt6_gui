@@ -12,6 +12,7 @@
 #include "lv_port_disp.h"
 #include <stdbool.h>
 #include "main.h"
+#include "touch_panel.h"
 /*********************
  *      DEFINES
  *********************/
@@ -40,10 +41,14 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 
 static void DMA_TransferComplete(DMA_HandleTypeDef *han);
 static void DMA_TransferError(DMA_HandleTypeDef *han);
+
+
 /**********************
  *  STATIC VARIABLES
  **********************/
 static lv_disp_drv_t disp_drv;
+
+
 extern DMA_HandleTypeDef hdma_memtomem_dma2_stream0;
 static __IO uint16_t *my_fb = (__IO uint16_t*) 0x60020000;//A16
 static __IO uint16_t *buf;
